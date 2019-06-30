@@ -8,9 +8,10 @@ export default ({
   paddingInner,
   paddingOuter,
   align,
-  tickFormat,
+  tickFormat
 }) => {
   const scale = scaleBand();
+  scale.type = 'band';
 
   if (range) scale.range(range);
   if (rangeRound) scale.rangeRound(rangeRound);
@@ -22,4 +23,4 @@ export default ({
   if (tickFormat) scale.tickFormat = tickFormat;
 
   return scale;
-}
+};

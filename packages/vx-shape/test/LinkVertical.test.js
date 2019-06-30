@@ -1,4 +1,3 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 import { hierarchy } from 'd3-hierarchy';
 import { LinkVertical } from '../src';
@@ -9,9 +8,9 @@ const mockHierarchy = hierarchy({
     { name: 'Cain' },
     {
       name: 'Seth',
-      children: [{ name: 'Enos' }, { name: 'Noam' }],
-    },
-  ],
+      children: [{ name: 'Enos' }, { name: 'Noam' }]
+    }
+  ]
 });
 const link = mockHierarchy.links()[0];
 
@@ -26,9 +25,6 @@ describe('<LinkVertical />', () => {
       expect(n.tagName).toEqual('PATH');
       done();
     };
-    ReactDOM.render(
-      <LinkVertical innerRef={refCallback} data={link} />,
-      node,
-    );
+    ReactDOM.render(<LinkVertical innerRef={refCallback} data={link} />, node);
   });
 });

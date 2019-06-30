@@ -2,20 +2,44 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { Group } from '@vx/group';
-import additionalProps from '../util/additionalProps';
 import Graticule from '../graticule/Graticule';
 import {
   geoOrthographic,
   geoAlbers,
+  geoAlbersUsa,
   geoMercator,
-  geoPath,
+  geoNaturalEarth1,
+  geoEqualEarth,
+  geoPath
 } from 'd3-geo';
 
 // TODO: Implement all projections of d3-geo
 const projectionMapping = {
   orthographic: () => geoOrthographic(),
   albers: () => geoAlbers(),
+  albersUsa: () => geoAlbersUsa(),
   mercator: () => geoMercator(),
+  naturalEarth: () => geoNaturalEarth1(),
+  equalEarth: () => geoEqualEarth()
+};
+
+Projection.propTypes = {
+  data: PropTypes.array.isRequired,
+  projection: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+  projectionFunc: PropTypes.func,
+  clipAngle: PropTypes.number,
+  clipExtent: PropTypes.array,
+  scale: PropTypes.number,
+  translate: PropTypes.array,
+  center: PropTypes.array,
+  rotate: PropTypes.array,
+  precision: PropTypes.number,
+  fitExtent: PropTypes.array,
+  fitSize: PropTypes.array,
+  centroid: PropTypes.func,
+  className: PropTypes.string,
+  children: PropTypes.func,
+  innerRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object])
 };
 
 /**
@@ -41,9 +65,11 @@ export default function Projection({
   className,
   innerRef,
   pointRadius,
+  children,
   ...restProps
 }) {
-  const currProjection = projectionMapping[projection]();
+  const maybeCustomProjection = projectionMapping[projection] || projection;
+  const currProjection = maybeCustomProjection();
 
   if (clipAngle) currProjection.clipAngle(clipAngle);
   if (clipExtent) currProjection.clipExtent(clipExtent);
@@ -59,66 +85,48 @@ export default function Projection({
 
   if (pointRadius) path.pointRadius(pointRadius);
 
-  return (
-    <Group className={`vx-geo`}>
-      {graticule &&
-        !graticule.foreground &&
-        <Graticule graticule={g => path(g)} {...graticule} />}
-      {graticuleLines &&
-        !graticuleLines.foreground &&
-        <Graticule lines={g => path(g)} {...graticuleLines} />}
-      {graticuleOutline &&
-        !graticuleOutline.foreground &&
-        <Graticule outline={g => path(g)} {...graticuleOutline} />}
+  const features = data.map((feature, i) => {
+    return {
+      feature,
+      type: projection,
+      projection: currProjection,
+      index: i,
+      centroid: path.centroid(feature),
+      path: path(feature)
+    };
+  });
 
-      {data.map((feature, i) => {
-        let c;
-        if (centroid) c = path.centroid(feature);
+  if (children) return children({ path, features });
+
+  return (
+    <Group className="vx-geo">
+      {graticule && !graticule.foreground && <Graticule graticule={g => path(g)} {...graticule} />}
+      {graticuleLines &&
+        !graticuleLines.foreground && <Graticule lines={g => path(g)} {...graticuleLines} />}
+      {graticuleOutline &&
+        !graticuleOutline.foreground && <Graticule outline={g => path(g)} {...graticuleOutline} />}
+
+      {features.map((feature, i) => {
         return (
           <g key={`${projection}-${i}`}>
             <path
               className={cx(`vx-geo-${projection}`, className)}
-              d={path(feature)}
+              d={feature.path}
               ref={innerRef && innerRef(feature, i)}
-              {...additionalProps(restProps, {
-                ...feature,
-                index: i,
-                centroid: c,
-              })}
+              {...restProps}
             />
-            {centroid && centroid(c, feature)}
+            {centroid && centroid(feature.centroid, feature)}
           </g>
         );
       })}
       {/* TODO: Maybe find a different way to pass projection function to use for example invert */}
       {projectionFunc && projectionFunc(currProjection)}
 
-      {graticule &&
-        graticule.foreground &&
-        <Graticule graticule={g => path(g)} {...graticule} />}
+      {graticule && graticule.foreground && <Graticule graticule={g => path(g)} {...graticule} />}
       {graticuleLines &&
-        graticuleLines.foreground &&
-        <Graticule lines={g => path(g)} {...graticuleLines} />}
+        graticuleLines.foreground && <Graticule lines={g => path(g)} {...graticuleLines} />}
       {graticuleOutline &&
-        graticuleOutline.foreground &&
-        <Graticule outline={g => path(g)} {...graticuleOutline} />}
+        graticuleOutline.foreground && <Graticule outline={g => path(g)} {...graticuleOutline} />}
     </Group>
   );
 }
-
-Projection.propTypes = {
-  data: PropTypes.array.isRequired,
-  projection: PropTypes.string,
-  projectionFunc: PropTypes.func,
-  clipAngle: PropTypes.number,
-  clipExtent: PropTypes.array,
-  scale: PropTypes.number,
-  translate: PropTypes.array,
-  center: PropTypes.array,
-  rotate: PropTypes.array,
-  precision: PropTypes.number,
-  fitExtent: PropTypes.array,
-  fitSize: PropTypes.array,
-  centroid: PropTypes.func,
-  className: PropTypes.string,
-};

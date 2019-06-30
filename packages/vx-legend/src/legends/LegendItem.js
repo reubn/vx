@@ -1,30 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import additonalProps from '../util/additionalProps';
 
 LegendItem.propTypes = {
   flexDirection: PropTypes.string,
-  margin: PropTypes.string,
-  label: PropTypes.object.isRequired,
+  alignItems: PropTypes.string,
+  margin: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  children: PropTypes.any
 };
 
 export default function LegendItem({
+  flexDirection = 'row',
+  alignItems = 'center',
+  margin = '0',
+  display = 'flex',
   children,
-  flexDirection,
-  margin,
-  label,
   ...restProps
 }) {
   return (
     <div
       className="vx-legend-item"
       style={{
-        display: 'flex',
-        alignItems: 'center',
+        display,
+        alignItems,
         flexDirection,
-        margin,
+        margin
       }}
-      {...additonalProps(restProps, label)}
+      {...restProps}
     >
       {children}
     </div>

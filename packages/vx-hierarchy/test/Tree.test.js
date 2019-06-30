@@ -1,5 +1,3 @@
-import React from 'react';
-import { shallow } from 'enzyme';
 import { hierarchy } from 'd3-hierarchy';
 import { Tree } from '../src';
 
@@ -10,13 +8,12 @@ const mockHierarchy = hierarchy({
     { name: 'Cain' },
     {
       name: 'Seth',
-      children: [{ name: 'Enos' }, { name: 'Noam' }],
-    },
-  ],
+      children: [{ name: 'Enos' }, { name: 'Noam' }]
+    }
+  ]
 });
 
-const TreeWrapper = ({ ...restProps }) =>
-  shallow(<Tree {...restProps} />);
+const TreeWrapper = ({ ...restProps }) => shallow(<Tree {...restProps} />);
 
 describe('<Tree />', () => {
   test('it should be defined', () => {

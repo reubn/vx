@@ -1,10 +1,10 @@
-import React from 'react';
 import { VoronoiPolygon } from '../src';
-import { shallow } from 'enzyme';
 
 describe('<VoronoiPolygon />', () => {
   const data = [1, 2];
-  const polygon = Array(3).fill(null).map((_, i) => [i, i]);
+  const polygon = Array(3)
+    .fill(null)
+    .map((_, i) => [i, i]);
   polygon.data = data;
 
   const props = { polygon };
@@ -32,12 +32,5 @@ describe('<VoronoiPolygon />', () => {
   test('it should add extra (non-func) props to the path element', () => {
     const wrapper = shallow(<VoronoiPolygon {...props} fill="orange" />);
     expect(wrapper.find('path').props().fill).toEqual('orange');
-  });
-
-  test('it should pass `polygon.data` to extra functional props', () => {
-    const fill = jest.fn();
-    const wrapper = shallow(<VoronoiPolygon {...props} fill={fill} />);
-    expect(fill).toHaveBeenCalledTimes(1);
-    expect(fill).toHaveBeenCalledWith(data);
   });
 });

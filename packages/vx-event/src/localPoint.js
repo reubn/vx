@@ -34,14 +34,14 @@ export default function localPoint(node, event) {
     point = point.matrixTransform(node.getScreenCTM().inverse());
     return new Point({
       x: point.x,
-      y: point.y,
+      y: point.y
     });
   }
 
   // fallback to calculating position from non-svg dom node
-  let rect = node.getBoundingClientRect();
+  const rect = node.getBoundingClientRect();
   return new Point({
     x: clientX - rect.left - node.clientLeft,
-    y: clientY - rect.top - node.clientTop,
+    y: clientY - rect.top - node.clientTop
   });
 }

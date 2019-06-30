@@ -1,8 +1,30 @@
 import React from 'react';
 import cx from 'classnames';
+import PropTypes from 'prop-types';
 import { Group } from '@vx/group';
-import Rows from './Rows';
-import Columns from './Columns';
+import Rows from './GridRows';
+import Columns from './GridColumns';
+
+Grid.propTypes = {
+  top: PropTypes.number,
+  left: PropTypes.number,
+  className: PropTypes.string,
+  stroke: PropTypes.string,
+  strokeWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  strokeDasharray: PropTypes.string,
+  numTicksRows: PropTypes.number,
+  numTicksColumns: PropTypes.number,
+  rowLineStyle: PropTypes.object,
+  columnLineStyle: PropTypes.object,
+  xOffset: PropTypes.number,
+  yOffset: PropTypes.number,
+  xScale: PropTypes.func.isRequired,
+  yScale: PropTypes.func.isRequired,
+  height: PropTypes.number.isRequired,
+  width: PropTypes.number.isRequired,
+  rowTickValues: PropTypes.array,
+  columnTickValues: PropTypes.array
+};
 
 export default function Grid({
   top,
@@ -19,6 +41,11 @@ export default function Grid({
   numTicksColumns,
   rowLineStyle,
   columnLineStyle,
+  xOffset,
+  yOffset,
+  rowTickValues,
+  columnTickValues,
+  ...restProps
 }) {
   return (
     <Group className={cx('vx-grid', className)} top={top} left={left}>
@@ -31,6 +58,9 @@ export default function Grid({
         strokeDasharray={strokeDasharray}
         numTicks={numTicksRows}
         style={rowLineStyle}
+        offset={yOffset}
+        tickValues={rowTickValues}
+        {...restProps}
       />
       <Columns
         className={className}
@@ -41,6 +71,9 @@ export default function Grid({
         strokeDasharray={strokeDasharray}
         numTicks={numTicksColumns}
         style={columnLineStyle}
+        offset={xOffset}
+        tickValues={columnTickValues}
+        {...restProps}
       />
     </Group>
   );

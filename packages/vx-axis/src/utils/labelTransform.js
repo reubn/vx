@@ -6,17 +6,24 @@ export default function labelTransform({
   orientation,
   range,
   tickLabelFontSize,
-  tickLength,
+  tickLength
 }) {
   const sign = orientation === ORIENT.left || orientation === ORIENT.top ? -1 : 1;
 
-  let x, y, transform = null;
+  let x;
+  let y;
+  let transform = null;
+
   if (orientation === ORIENT.top || orientation === ORIENT.bottom) {
-    x = Math.max(...range) / 2;
-    y = sign * (tickLength + labelOffset + tickLabelFontSize +
-      (orientation === ORIENT.bottom ? labelProps.fontSize : 0));
+    x = (range[0] + range[range.length - 1]) / 2;
+    y =
+      sign *
+      (tickLength +
+        labelOffset +
+        tickLabelFontSize +
+        (orientation === ORIENT.bottom ? labelProps.fontSize : 0));
   } else {
-    x = sign * (Math.max(...range) / 2);
+    x = sign * ((range[0] + range[range.length - 1]) / 2);
     y = -(tickLength + labelOffset);
     transform = `rotate(${sign * 90})`;
   }

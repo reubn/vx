@@ -1,5 +1,3 @@
-import React from 'react';
-import { shallow } from 'enzyme';
 import { hierarchy } from 'd3-hierarchy';
 import { Cluster } from '../src';
 
@@ -10,13 +8,12 @@ const mockHierarchy = hierarchy({
     { name: 'Cain' },
     {
       name: 'Seth',
-      children: [{ name: 'Enos' }, { name: 'Noam' }],
-    },
-  ],
+      children: [{ name: 'Enos' }, { name: 'Noam' }]
+    }
+  ]
 });
 
-const ClusterWrapper = ({ ...restProps }) =>
-  shallow(<Cluster {...restProps} />);
+const ClusterWrapper = ({ ...restProps }) => shallow(<Cluster {...restProps} />);
 
 describe('<Cluster />', () => {
   test('it should be defined', () => {

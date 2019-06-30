@@ -2,26 +2,31 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 LegendLabel.propTypes = {
-  label: PropTypes.string.isRequired,
-  margin: PropTypes.string.isRequired,
+  align: PropTypes.string,
+  label: PropTypes.any,
+  flex: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  margin: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  children: PropTypes.any
 };
 
 export default function LegendLabel({
+  flex = '1',
   label,
-  margin,
-  align,
+  margin = '5px 0',
+  align = 'left',
+  children
 }) {
   return (
     <div
-      className='vx-legend-label'
+      className="vx-legend-label"
       style={{
         justifyContent: align,
         display: 'flex',
-        flex: '1',
-        margin,
+        flex,
+        margin
       }}
     >
-      {label}
+      {children || label}
     </div>
   );
 }

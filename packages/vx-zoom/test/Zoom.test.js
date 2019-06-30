@@ -1,7 +1,13 @@
-import { Zoom } from '../src';
+import { Zoom, inverseMatrix } from '../src';
 
 describe('Zoom', () => {
   test('it should be defined', () => {
-    expect(Zoom).toBeDefined()
-  })
-})
+    expect(Zoom).toBeDefined();
+  });
+});
+
+describe('inverseMatrix', () => {
+  test('it should be defined', () => {
+    expect(inverseMatrix).toBeDefined();
+  });
+});

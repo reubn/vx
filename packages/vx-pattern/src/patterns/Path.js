@@ -15,21 +15,11 @@ export default function PatternPath({
   strokeLinecap = 'square',
   shapeRendering = 'auto',
   background,
-  className,
+  className
 }) {
   return (
-    <Pattern
-      id={id}
-      width={width}
-      height={height}
-    >
-      {!!background &&
-        <rect
-          width={width}
-          height={height}
-          fill={background}
-        />
-      }
+    <Pattern id={id} width={width} height={height}>
+      {!!background && <rect width={width} height={height} fill={background} />}
       <path
         className={cx('vx-pattern-path', className)}
         d={path}
@@ -48,10 +38,13 @@ PatternPath.propTypes = {
   id: PropTypes.string.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
+  path: PropTypes.string,
   fill: PropTypes.string,
   className: PropTypes.string,
   background: PropTypes.string,
   stroke: PropTypes.string,
   strokeWidth: PropTypes.number,
   strokeDasharray: PropTypes.string,
-}
+  strokeLinecap: PropTypes.string,
+  shapeRendering: PropTypes.string
+};

@@ -8,6 +8,13 @@ import DefaultNode from '../HierarchyDefaultNode';
 Partition.propTypes = {
   root: PropTypes.object.isRequired,
   children: PropTypes.func,
+  top: PropTypes.number,
+  left: PropTypes.number,
+  className: PropTypes.string,
+  size: PropTypes.arrayOf(PropTypes.number),
+  round: PropTypes.bool,
+  padding: PropTypes.number,
+  nodeComponent: PropTypes.any
 };
 
 export default function Partition({
@@ -29,24 +36,10 @@ export default function Partition({
 
   const data = partition(root);
 
-  if (!!children) {
-    return (
-      <Group
-        top={top}
-        left={left}
-        className={cx('vx-partition', className)}
-      >
-        {children({ data })}
-      </Group>
-    );
-  }
+  if (children) return children(data);
 
   return (
-    <Group
-      top={top}
-      left={left}
-      className={cx('vx-partition', className)}
-    >
+    <Group top={top} left={left} className={cx('vx-partition', className)}>
       {nodeComponent &&
         data.descendants().map((node, i) => {
           return (

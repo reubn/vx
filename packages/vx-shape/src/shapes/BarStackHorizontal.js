@@ -2,8 +2,29 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 import { Group } from '@vx/group';
-import Bar from './Bar';
 import { stack as d3stack } from 'd3-shape';
+import stackOrder from '../util/stackOrder';
+import stackOffset from '../util/stackOffset';
+import objHasMethod from '../util/objHasMethod';
+import Bar from './Bar';
+
+BarStackHorizontal.propTypes = {
+  data: PropTypes.array.isRequired,
+  y: PropTypes.func.isRequired,
+  x0: PropTypes.func,
+  x1: PropTypes.func,
+  xScale: PropTypes.func.isRequired,
+  yScale: PropTypes.func.isRequired,
+  color: PropTypes.func.isRequired,
+  keys: PropTypes.array.isRequired,
+  className: PropTypes.string,
+  top: PropTypes.number,
+  left: PropTypes.number,
+  order: PropTypes.oneOfType([PropTypes.func, PropTypes.array, PropTypes.string]),
+  offset: PropTypes.oneOfType([PropTypes.func, PropTypes.array, PropTypes.string]),
+  value: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
+  children: PropTypes.func
+};
 
 export default function BarStackHorizontal({
   data,
@@ -11,67 +32,76 @@ export default function BarStackHorizontal({
   top,
   left,
   y,
+  x0 = d => d[0],
+  x1 = d => d[1],
   xScale,
   yScale,
-  zScale,
+  color,
   keys,
-  height,
+  value,
+  order,
+  offset,
+  children,
   ...restProps
 }) {
-  const series = d3stack().keys(keys)(data);
-  const format = yScale.tickFormat ? yScale.tickFormat() : d => d;
-  const bandwidth = yScale.bandwidth();
-  const step = yScale.step();
-  const paddingInner = yScale.paddingInner();
-  const paddingOuter = yScale.paddingOuter();
+  const stack = d3stack();
+  if (keys) stack.keys(keys);
+  if (value) stack.value(value);
+  if (order) stack.order(stackOrder(order));
+  if (offset) stack.offset(stackOffset(offset));
+
+  const stacks = stack(data);
+
+  const yRange = yScale.range();
+  const yDomain = yScale.domain();
+  const barHeight = objHasMethod(yScale, 'bandwidth')
+    ? yScale.bandwidth()
+    : Math.abs(yRange[yRange.length - 1] - yRange[0]) / yDomain.length;
+
+  const barStacks = stacks.map((barStack, i) => {
+    const key = barStack.key;
+    return {
+      index: i,
+      key,
+      bars: barStack.map((bar, j) => {
+        const barWidth = xScale(x1(bar)) - xScale(x0(bar));
+        const barX = xScale(x0(bar));
+        const barY = objHasMethod(yScale, 'bandwidth')
+          ? yScale(y(bar.data))
+          : Math.max(yScale(y(bar.data)) - barWidth / 2);
+        return {
+          bar,
+          key,
+          index: j,
+          height: barHeight,
+          width: barWidth,
+          x: barX,
+          y: barY,
+          color: color(barStack.key, j)
+        };
+      })
+    };
+  });
+
+  if (children) return children(barStacks);
+
   return (
     <Group className={cx('vx-bar-stack-horizontal', className)} top={top} left={left}>
-      {series &&
-        series.map((s, i) => {
+      {barStacks.map(barStack => {
+        return barStack.bars.map(bar => {
           return (
-            <Group key={`vx-bar-stack-horizontal-${i}`}>
-              {s.map((d, ii) => {
-                const barWidth = xScale(d[1]) - xScale(d[0]);
-                return (
-                  <Bar
-                    key={`bar-group-bar-${i}-${ii}-${s.key}`}
-                    x={xScale(d[0])}
-                    y={yScale(y(d.data))}
-                    width={barWidth}
-                    height={bandwidth}
-                    fill={zScale(s.key)}
-                    data={{
-                      bandwidth,
-                      paddingInner,
-                      paddingOuter,
-                      step,
-                      key: s.key,
-                      value: d[0],
-                      height: bandwidth,
-                      width: barWidth,
-                      y: y(d.data),
-                      yFormatted: format(y(d.data)),
-                      data: d.data,
-                    }}
-                    {...restProps}
-                  />
-                );
-              })}
-            </Group>
+            <Bar
+              key={`bar-stack-${barStack.index}-${bar.index}`}
+              x={bar.x}
+              y={bar.y}
+              height={bar.height}
+              width={bar.width}
+              fill={bar.color}
+              {...restProps}
+            />
           );
-        })}
+        });
+      })}
     </Group>
   );
 }
-
-BarStackHorizontal.propTypes = {
-  data: PropTypes.array.isRequired,
-  y: PropTypes.func.isRequired,
-  xScale: PropTypes.func.isRequired,
-  yScale: PropTypes.func.isRequired,
-  zScale: PropTypes.func.isRequired,
-  keys: PropTypes.array.isRequired,
-  className: PropTypes.string,
-  top: PropTypes.number,
-  left: PropTypes.number,
-};

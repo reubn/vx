@@ -7,7 +7,14 @@ import DefaultNode from '../HierarchyDefaultNode';
 
 Pack.propTypes = {
   root: PropTypes.object.isRequired,
-  children: PropTypes.func
+  children: PropTypes.func,
+  top: PropTypes.number,
+  left: PropTypes.number,
+  className: PropTypes.string,
+  radius: PropTypes.func,
+  size: PropTypes.arrayOf(PropTypes.number),
+  padding: PropTypes.number,
+  nodeComponent: PropTypes.any
 };
 
 export default function Pack({
@@ -23,28 +30,21 @@ export default function Pack({
   ...restProps
 }) {
   const pack = d3pack();
+
   if (size) pack.size(size);
-  if (radius) pack.radius(radius);
+  if (radius !== undefined) pack.radius(radius);
   if (padding) pack.padding(padding);
 
   const data = pack(root);
 
-  if (!!children) {
-    return (
-      <Group top={top} left={left} className={cx('vx-pack', className)}>
-        {children({ data })}
-      </Group>
-    );
-  }
+  if (children) return children(data);
 
   return (
     <Group top={top} left={left} className={cx('vx-pack', className)}>
       {nodeComponent &&
         data.descendants().map((node, i) => {
           return (
-            <Group key={`pack-node-${i}`}>
-              {React.createElement(nodeComponent, { node })}
-            </Group>
+            <Group key={`pack-node-${i}`}>{React.createElement(nodeComponent, { node })}</Group>
           );
         })}
     </Group>

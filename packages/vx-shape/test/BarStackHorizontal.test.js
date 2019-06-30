@@ -1,8 +1,8 @@
-import React from 'react';
 import { BarStackHorizontal } from '../src';
-import { shallow } from 'enzyme';
 
 const yScale = jest.fn();
+yScale.domain = () => [0, 100];
+yScale.range = () => [0, 100];
 yScale.bandwidth = jest.fn();
 yScale.step = jest.fn();
 yScale.paddingInner = jest.fn();
@@ -22,9 +22,9 @@ describe('<BarStackHorizontal />', () => {
         y={d => d}
         xScale={d => d}
         yScale={yScale}
-        zScale={d => d}
+        color={d => d}
         keys={[]}
-      />,
+      />
     );
     expect(wrapper.prop('className')).toEqual('vx-bar-stack-horizontal');
   });
@@ -39,9 +39,9 @@ describe('<BarStackHorizontal />', () => {
         y={d => d}
         xScale={d => d}
         yScale={yScale}
-        zScale={d => d}
+        color={d => d}
         keys={[]}
-      />,
+      />
     );
     expect(wrapper.prop('className')).toEqual('vx-bar-stack-horizontal test');
   });
@@ -56,9 +56,9 @@ describe('<BarStackHorizontal />', () => {
         y={d => d}
         xScale={d => d}
         yScale={yScale}
-        zScale={d => d}
+        color={d => d}
         keys={[]}
-      />,
+      />
     );
     expect(wrapper.prop('top')).toEqual(2);
     expect(wrapper.prop('left')).toEqual(3);

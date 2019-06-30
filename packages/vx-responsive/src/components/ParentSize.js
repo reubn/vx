@@ -1,68 +1,72 @@
-import React from 'react';
+import debounce from 'lodash/debounce';
 import PropTypes from 'prop-types';
+import React from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
 
-import debounce from 'lodash/debounce';
-
 export default class ParentSize extends React.Component {
-  static defaultProps = {
-    debounceTime: 300,
-  };
-
   constructor(props) {
     super(props);
-    this.state = { width: 0, height: 0, top: 0, left: 0 };
+    this.state = {
+      width: 0,
+      height: 0,
+      top: 0,
+      left: 0
+    };
     this.resize = debounce(this.resize.bind(this), props.debounceTime);
     this.setTarget = this.setTarget.bind(this);
+    this.animationFrameID = null;
   }
+
   componentDidMount() {
-    this.ro = new ResizeObserver((entries, observer) => {
-      for (const entry of entries) {
+    this.ro = new ResizeObserver((entries = [], observer) => {
+      entries.forEach(entry => {
         const { left, top, width, height } = entry.contentRect;
-        this.resize({
-          width,
-          height,
-          top,
-          left,
+        this.animationFrameID = window.requestAnimationFrame(() => {
+          this.resize({ width, height, top, left });
         });
-      }
+      });
     });
     this.ro.observe(this.target);
   }
+
   componentWillUnmount() {
+    window.cancelAnimationFrame(this.animationFrameID);
     this.ro.disconnect();
   }
+
   resize({ width, height, top, left }) {
-    this.setState(() => ({
-      width,
-      height,
-      top,
-      left,
-    }));
+    this.setState(() => ({ width, height, top, left }));
   }
+
   setTarget(ref) {
     this.target = ref;
   }
+
   render() {
-    const { className, children } = this.props;
+    const { className, children, debounceTime, ...restProps } = this.props;
     return (
       <div
         style={{ width: '100%', height: '100%' }}
         ref={this.setTarget}
         className={className}
+        {...restProps}
       >
         {children({
           ...this.state,
           ref: this.target,
-          resize: this.resize,
+          resize: this.resize
         })}
       </div>
     );
   }
 }
 
+ParentSize.defaultProps = {
+  debounceTime: 300
+};
+
 ParentSize.propTypes = {
   className: PropTypes.string,
   children: PropTypes.func.isRequired,
-  debounceTime: PropTypes.number,
+  debounceTime: PropTypes.number
 };

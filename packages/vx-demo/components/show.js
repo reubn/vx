@@ -2,8 +2,6 @@ import React from 'react';
 import cx from 'classnames';
 import { withScreenSize } from '@vx/responsive';
 import Page from '../components/page';
-import Footer from '../components/footer';
-import Bars from '../components/tiles/bars';
 import Codeblock from '../components/codeblocks/Codeblock';
 import Gallery from '../components/gallery';
 
@@ -17,6 +15,7 @@ export default withScreenSize(
     shadow = false,
     events = false,
     margin = { top: 0, left: 0, right: 0, bottom: 80 },
+    description
   }) => {
     const padding = 40;
     let width = screenWidth - padding;
@@ -32,19 +31,20 @@ export default withScreenSize(
           <div
             className={cx(
               {
-                shadow: !!shadow,
+                shadow: !!shadow
               },
               title.split(' ').join('-'),
-              'chart',
+              'chart'
             )}
           >
             {React.createElement(component, {
               width,
               height,
               margin,
-              events,
+              events
             })}
           </div>
+          {description && React.createElement(description, { width, height })}
           {children && (
             <div style={{ width: width }}>
               <h2>Code</h2>
@@ -64,6 +64,7 @@ export default withScreenSize(
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow: hidden;
           }
           .container h1 {
             margin-top: 15px;
@@ -84,5 +85,5 @@ export default withScreenSize(
         `}</style>
       </Page>
     );
-  },
+  }
 );

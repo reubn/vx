@@ -1,14 +1,8 @@
 import { scalePow } from 'd3-scale';
 
-export default ({
-  range,
-  rangeRound,
-  domain,
-  exponent,
-  nice = false,
-  clamp = false,
-}) => {
+export default ({ range, rangeRound, domain, exponent, nice = false, clamp = false }) => {
   const scale = scalePow();
+  scale.type = 'power';
 
   if (range) scale.range(range);
   if (rangeRound) scale.rangeRound(rangeRound);
@@ -18,4 +12,4 @@ export default ({
   if (exponent) scale.exponent(exponent);
 
   return scale;
-}
+};

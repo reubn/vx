@@ -5,12 +5,9 @@ import { LinearGradient } from '@vx/gradient';
 import { scaleBand, scaleLinear } from '@vx/scale';
 import { genStats } from '@vx/mock-data';
 import { withTooltip, Tooltip } from '@vx/tooltip';
-import { extent } from 'd3-array';
-import { format } from 'd3-format';
 import { PatternLines } from '@vx/pattern';
 
 const data = genStats(5);
-const twoDecimalFormat = format('.2f');
 
 // accessors
 const x = d => d.boxPlot.x;
@@ -46,16 +43,10 @@ export default withTooltip(
       padding: 0.4
     });
 
-    const values = data.reduce(
-      (r, { boxPlot:e }) => r.push(e.min, e.max) && r,
-      []
-    );
+    const values = data.reduce((r, { boxPlot: e }) => r.push(e.min, e.max) && r, []);
     const minYValue = Math.min(...values);
     const maxYValue = Math.max(...values);
-    const yDomain = [
-      minYValue - 0.1 * Math.abs(minYValue),
-      maxYValue + 0.1 * Math.abs(minYValue)
-    ];
+    const yDomain = [minYValue - 0.1 * Math.abs(minYValue), maxYValue + 0.1 * Math.abs(minYValue)];
 
     const yScale = scaleLinear({
       rangeRound: [yMax, 0],
@@ -63,49 +54,42 @@ export default withTooltip(
     });
 
     const boxWidth = xScale.bandwidth();
-    const actualyWidth = Math.min(40, boxWidth);
+    const constrainedWidth = Math.min(40, boxWidth);
 
     return (
       <div style={{ position: 'relative' }}>
         <svg width={width} height={height}>
           <LinearGradient id="boxplot" to="#8b6ce7" from="#87f2d4" />
-          <rect
-            x={0}
-            y={0}
-            width={width}
-            height={height}
-            fill={`url(#boxplot)`}
-            rx={14}
-          />
+          <rect x={0} y={0} width={width} height={height} fill={`url(#boxplot)`} rx={14} />
           <PatternLines
-            id='hViolinLines'
+            id="hViolinLines"
             height={3}
             width={3}
-            stroke='#ced4da'
+            stroke="#ced4da"
             strokeWidth={1}
-            fill='rgba(0,0,0,0.3)'
+            fill="rgba(0,0,0,0.3)"
             orientation={['horizontal']}
           />
           <Group top={40}>
-            {data.map((d, i) =>
+            {data.map((d, i) => (
               <g key={i}>
                 <ViolinPlot
-                  stroke='#dee2e6'
-                  binData={d.binData}
+                  data={d.binData}
+                  stroke="#dee2e6"
                   left={xScale(x(d))}
-                  width={actualyWidth}
+                  width={constrainedWidth}
                   valueScale={yScale}
                   fill="url(#hViolinLines)"
                 />
                 <BoxPlot
-                  data={d}
+                  data={d.binData}
                   min={min(d)}
                   max={max(d)}
-                  left={xScale(x(d))+0.3*actualyWidth}
+                  left={xScale(x(d)) + 0.3 * constrainedWidth}
                   firstQuartile={firstQuartile(d)}
                   thirdQuartile={thirdQuartile(d)}
                   median={median(d)}
-                  boxWidth={actualyWidth*0.4}
+                  boxWidth={constrainedWidth * 0.4}
                   fill="#FFFFFF"
                   fillOpacity={0.3}
                   stroke="#FFFFFF"
@@ -113,47 +97,47 @@ export default withTooltip(
                   valueScale={yScale}
                   outliers={outliers(d)}
                   minProps={{
-                    onMouseOver: data => event => {
+                    onMouseOver: event => {
                       showTooltip({
-                        tooltipTop: yScale(data.data.boxPlot.min) + 40,
-                        tooltipLeft: data.x2 + 5,
+                        tooltipTop: yScale(min(d)) + 40,
+                        tooltipLeft: xScale(x(d)) + constrainedWidth + 5,
                         tooltipData: {
-                          min: data.data.boxPlot.min,
+                          min: min(d),
                           name: x(d)
                         }
                       });
                     },
-                    onMouseLeave: event => event => {
+                    onMouseLeave: event => {
                       hideTooltip();
                     }
                   }}
                   maxProps={{
-                    onMouseOver: data => event => {
+                    onMouseOver: event => {
                       showTooltip({
-                        tooltipTop: yScale(data.data.boxPlot.max) + 40,
-                        tooltipLeft: data.x2 + 5,
+                        tooltipTop: yScale(max(d)) + 40,
+                        tooltipLeft: xScale(x(d)) + constrainedWidth + 5,
                         tooltipData: {
-                          max: data.data.boxPlot.max,
+                          max: max(d),
                           name: x(d)
                         }
                       });
                     },
-                    onMouseLeave: event => event => {
+                    onMouseLeave: event => {
                       hideTooltip();
                     }
                   }}
                   boxProps={{
-                    onMouseOver: data => event => {
+                    onMouseOver: event => {
                       showTooltip({
-                        tooltipTop: yScale(data.data.boxPlot.median) + 40,
-                        tooltipLeft: data.x2 + 5,
+                        tooltipTop: yScale(median(d)) + 40,
+                        tooltipLeft: xScale(x(d)) + constrainedWidth + 5,
                         tooltipData: {
-                          ...data.data.boxPlot,
+                          ...d.boxPlot,
                           name: x(d)
                         }
                       });
                     },
-                    onMouseLeave: event => event => {
+                    onMouseLeave: event => {
                       hideTooltip();
                     }
                   }}
@@ -161,59 +145,43 @@ export default withTooltip(
                     style: {
                       stroke: 'white'
                     },
-                    onMouseOver: data => event => {
+                    onMouseOver: event => {
                       showTooltip({
-                        tooltipTop: data.median + 40,
-                        tooltipLeft: data.x2 + 5,
+                        tooltipTop: yScale(median(d)) + 40,
+                        tooltipLeft: xScale(x(d)) + constrainedWidth + 5,
                         tooltipData: {
-                          median: data.data.boxPlot.median,
+                          median: median(d),
                           name: x(d)
                         }
                       });
                     },
-                    onMouseLeave: data => event => {
+                    onMouseLeave: event => {
                       hideTooltip();
                     }
                   }}
                 />
               </g>
-            )}
+            ))}
           </Group>
         </svg>
-        {tooltipOpen &&
+        {tooltipOpen && (
           <Tooltip
             top={tooltipTop}
             left={tooltipLeft}
             style={{ backgroundColor: '#283238', color: 'white' }}
           >
             <div>
-              <strong>
-                {tooltipData.name}
-              </strong>
+              <strong>{tooltipData.name}</strong>
             </div>
             <div style={{ marginTop: '5px', fontSize: '12px' }}>
-              {tooltipData.max &&
-                <div>
-                  max: {tooltipData.max}
-                </div>}
-              {tooltipData.thirdQuartile &&
-                <div>
-                  third quartile: {tooltipData.thirdQuartile}
-                </div>}
-              {tooltipData.median &&
-                <div>
-                  median: {tooltipData.median}
-                </div>}
-              {tooltipData.firstQuartile &&
-                <div>
-                  first quartile: {tooltipData.firstQuartile}
-                </div>}
-              {tooltipData.min &&
-                <div>
-                  min: {tooltipData.min}
-                </div>}
+              {tooltipData.max && <div>max: {tooltipData.max}</div>}
+              {tooltipData.thirdQuartile && <div>third quartile: {tooltipData.thirdQuartile}</div>}
+              {tooltipData.median && <div>median: {tooltipData.median}</div>}
+              {tooltipData.firstQuartile && <div>first quartile: {tooltipData.firstQuartile}</div>}
+              {tooltipData.min && <div>min: {tooltipData.min}</div>}
             </div>
-          </Tooltip>}
+          </Tooltip>
+        )}
       </div>
     );
   }

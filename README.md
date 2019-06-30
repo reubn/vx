@@ -15,6 +15,9 @@
   <a title="@vx/shape npm downloads" href="https://www.npmjs.com/package/@vx/shape">
     <img src="https://img.shields.io/npm/dm/@vx/shape.svg?style=flat-square" />
   </a>
+  <a title="Join the community on Spectrum" href="https://spectrum.chat/vx">
+    <img src="https://withspectrum.github.io/badge/badge.svg" />
+  </a>
   <a href="https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fhshoff%2Fvx?ref=badge_shield" alt="FOSSA Status">     <img src="https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fhshoff%2Fvx.svg?type=shield"/>
   </a>
   <a href="https://lernajs.io/" alt="lerna">
@@ -180,6 +183,13 @@ Lots coming soon, check out the [roadmap](./ROADMAP.md).
 - Investment Calculator ([website](https://investmentcalculator.io/))
 - Cryptagon - crypto portfolio tracker ([website](https://cryptagon.io/))
 - Animation with [`react-spring`](https://github.com/drcmda/react-spring/) by [@drcmda](https://github.com/drcmda) ([Demo](https://codesandbox.io/embed/j3x61vjz5v))
+- Code Coverage Dashboard by [@ezy](https://github.com/ezy)
+([Demo](https://codecov-dash.herokuapp.com/))
+([Github](https://github.com/ezy/code-coverage-dashboard))
+- Ethereum Portfolio Toolkit by [@JayWelsh](https://github.com/JayWelsh)
+([Demo](https://cryptocape.com/))
+([Github](https://github.com/JayWelsh/CryptoCape))
+- Family tree by [@vkallore](https://github.com/vkallore) ([Demo](https://vk-ft.now.sh/))([Github](https://github.com/vkallore/d3-vx-family-tree))
 - Have a project that's using vx? Open a pull request and we'll add it to the list.
 
 ## FAQ
@@ -193,7 +203,7 @@ Lots coming soon, check out the [roadmap](./ROADMAP.md).
     >
     > Imagine your app already bundles `react-motion`, adding a hypothetical `@vx/animation` is bloat. Since vx is react, it already supports all react animation libs.
     >
-    > Charting libraries are like style guides. Each org or app will eventually want full control over their own implementation. 
+    > Charting libraries are like style guides. Each org or app will eventually want full control over their own implementation.
     >
     > vx makes this easier for everyone. No need to reinvent the wheel each time.
     >

@@ -8,30 +8,29 @@ import valueOrIdentity from '../util/valueOrIdentity';
 
 Legend.propTypes = {
   className: PropTypes.string,
-  style: PropTypes.object,
-  scale: PropTypes.oneOfType([PropTypes.func, PropTypes.object])
-    .isRequired,
-  shapeWidth: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.string,
-  ]),
-  shapeHeight: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.string,
-  ]),
-  shapeMargin: PropTypes.string,
+  style: PropTypes.any,
+  domain: PropTypes.array,
+  scale: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
+  shapeWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  shapeHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  shapeMargin: PropTypes.any,
+  labelAlign: PropTypes.string,
+  labelFlex: PropTypes.string,
   labelMargin: PropTypes.string,
   itemMargin: PropTypes.string,
   direction: PropTypes.string,
   itemDirection: PropTypes.string,
-  fill: PropTypes.func,
-  shape: PropTypes.oneOfType([PropTypes.func, PropTypes.string]),
+  fill: PropTypes.any,
+  size: PropTypes.any,
+  shape: PropTypes.any,
+  shapeStyle: PropTypes.any,
   labelFormat: PropTypes.func,
   labelTransform: PropTypes.func,
+  children: PropTypes.func
 };
 
 const defaultStyle = {
-  display: 'flex',
+  display: 'flex'
 };
 
 export default function Legend({
@@ -49,20 +48,23 @@ export default function Legend({
   shapeHeight = 15,
   shapeMargin = '2px 4px 2px 0',
   labelAlign = 'left',
+  labelFlex = '1',
   labelMargin = '0 4px',
   itemMargin = '0',
   direction = 'column',
   itemDirection = 'row',
+  children,
   ...restProps
 }) {
   domain = domain || scale.domain();
   const labels = domain.map(labelTransform({ scale, labelFormat }));
+  if (children) return children(labels);
   return (
     <div
       className={cx('vx-legend', className)}
       style={{
         ...style,
-        flexDirection: direction,
+        flexDirection: direction
       }}
     >
       {labels.map((label, i) => {
@@ -85,11 +87,7 @@ export default function Legend({
               size={size}
               shapeStyle={shapeStyle}
             />
-            <LegendLabel
-              label={text}
-              margin={labelMargin}
-              align={labelAlign}
-            />
+            <LegendLabel label={text} flex={labelFlex} margin={labelMargin} align={labelAlign} />
           </LegendItem>
         );
       })}
@@ -103,7 +101,7 @@ function defaultTransform({ scale, labelFormat }) {
       datum: d,
       index: i,
       text: `${labelFormat(d, i)}`,
-      value: scale(d),
+      value: scale(d)
     };
   };
 }

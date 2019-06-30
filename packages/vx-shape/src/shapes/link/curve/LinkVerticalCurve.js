@@ -1,26 +1,10 @@
 import React from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import { pointRadial } from 'd3-shape';
 import { path as d3Path } from 'd3-path';
-import additionalProps from '../../../util/additionalProps';
 
-LinkVerticalCurve.propTypes = {
-  innerRef: PropTypes.func
-};
-
-export default function LinkVerticalCurve({
-  className,
-  innerRef,
-  data,
-  x = d => d.x,
-  y = d => d.y,
-  source = d => d.source,
-  target = d => d.target,
-  ...restProps
-}) {
-
-  const link = (data) => {
+export function pathVerticalCurve({ source, target, x, y, percent }) {
+  return data => {
     const sourceData = source(data);
     const targetData = target(data);
 
@@ -31,21 +15,48 @@ export default function LinkVerticalCurve({
 
     const dx = tx - sx;
     const dy = ty - sy;
-    const ix = 0.2 * (dx + dy);
-    const iy = 0.2 * (dy - dx);
+    const ix = percent * (dx + dy);
+    const iy = percent * (dy - dx);
 
-    const path =  d3Path();
-    path.moveTo(sx, sy)
-    path.bezierCurveTo(sx + ix, sy + iy, tx + iy, ty - ix, tx, ty)
+    const path = d3Path();
+    path.moveTo(sx, sy);
+    path.bezierCurveTo(sx + ix, sy + iy, tx + iy, ty - ix, tx, ty);
 
     return path.toString();
   };
+}
 
+LinkVerticalCurve.propTypes = {
+  innerRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
+  percent: PropTypes.number,
+  x: PropTypes.func,
+  y: PropTypes.func,
+  source: PropTypes.func,
+  target: PropTypes.func,
+  path: PropTypes.func,
+  children: PropTypes.func
+};
+
+export default function LinkVerticalCurve({
+  className,
+  innerRef,
+  data,
+  path,
+  x = d => d.x,
+  y = d => d.y,
+  source = d => d.source,
+  target = d => d.target,
+  percent = 0.2,
+  children,
+  ...restProps
+}) {
+  path = path || pathVerticalCurve({ source, target, x, y, percent });
+  if (children) return children({ path });
   return (
     <path
       ref={innerRef}
-      className={cx('vx-link', className)}
-      d={link(data)}
+      className={cx('vx-link vx-link-vertical-curve', className)}
+      d={path(data)}
       {...restProps}
     />
   );

@@ -17,7 +17,7 @@ export function createCircles({
   strokeDasharray,
   className
 }) {
-  return corners.map(([cornerX, cornerY]) =>
+  return corners.map(([cornerX, cornerY]) => (
     <circle
       key={`${id}-complement-${cornerX}-${cornerY}`}
       className={cxx('vx-pattern-circle vx-pattern-circle-complement', className)}
@@ -29,65 +29,7 @@ export function createCircles({
       strokeWidth={strokeWidth}
       strokeDasharray={strokeDasharray}
     />
-  );
-}
-
-export default function PatternCircles({
-  id,
-  width,
-  height,
-  radius = 2,
-  fill,
-  stroke,
-  strokeWidth,
-  strokeDasharray,
-  background,
-  complement = false,
-  className,
-}) {
-  let corners;
-  if (complement) {
-    corners = [
-      [0,0],
-      [0, height],
-      [width, 0],
-      [width, height]
-    ];
-  }
-  return (
-    <Pattern
-      id={id}
-      width={width}
-      height={height}
-    >
-      {!!background &&
-        <rect
-          width={width}
-          height={height}
-          fill={background}
-        />
-      }
-      <circle
-        className={cxx('vx-pattern-circle', className)}
-        cx={width / 2}
-        cy={height / 2}
-        r={radius}
-        fill={fill}
-        stroke={stroke}
-        strokeWidth={strokeWidth}
-        strokeDasharray={strokeDasharray}
-      />
-      {complement && createCircles({
-        corners,
-        id,
-        radius,
-        fill,
-        stroke,
-        strokeWidth,
-        strokeDasharray
-      })}
-    </Pattern>
-  );
+  ));
 }
 
 PatternCircles.propTypes = {
@@ -100,5 +42,50 @@ PatternCircles.propTypes = {
   stroke: PropTypes.string,
   strokeWidth: PropTypes.number,
   strokeDasharray: PropTypes.string,
-  complement: PropTypes.bool
+  complement: PropTypes.bool,
+  background: PropTypes.string
+};
+
+export default function PatternCircles({
+  id,
+  width,
+  height,
+  radius = 2,
+  fill,
+  stroke,
+  strokeWidth,
+  strokeDasharray,
+  background,
+  complement = false,
+  className
+}) {
+  let corners;
+  if (complement) {
+    corners = [[0, 0], [0, height], [width, 0], [width, height]];
+  }
+  return (
+    <Pattern id={id} width={width} height={height}>
+      {!!background && <rect width={width} height={height} fill={background} />}
+      <circle
+        className={cxx('vx-pattern-circle', className)}
+        cx={width / 2}
+        cy={height / 2}
+        r={radius}
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+        strokeDasharray={strokeDasharray}
+      />
+      {complement &&
+        createCircles({
+          corners,
+          id,
+          radius,
+          fill,
+          stroke,
+          strokeWidth,
+          strokeDasharray
+        })}
+    </Pattern>
+  );
 }

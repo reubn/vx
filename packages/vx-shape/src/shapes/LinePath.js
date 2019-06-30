@@ -2,52 +2,41 @@ import React from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { line } from 'd3-shape';
-import { curveLinear } from '@vx/curve';
-import additionalProps from '../util/additionalProps';
 
 LinePath.propTypes = {
-  innerRef: PropTypes.func,
+  data: PropTypes.array,
+  curve: PropTypes.func,
+  innerRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
+  defined: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+  x: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
+  y: PropTypes.oneOfType([PropTypes.func, PropTypes.number])
 };
 
 export default function LinePath({
+  children,
   data,
-  xScale,
-  yScale,
   x,
   y,
-  defined = () => true,
+  fill = 'transparent',
   className,
-  stroke = 'steelblue',
-  strokeWidth = 2,
-  strokeDasharray = '',
-  strokeDashoffset = 0,
-  fill = 'none',
-  curve = curveLinear,
-  glyph,
+  curve,
   innerRef,
+  defined = () => true,
   ...restProps
 }) {
-  const path = line()
-    .x(d => xScale(x(d)))
-    .y(d => yScale(y(d)))
-    .defined(defined)
-    .curve(curve);
+  const path = line();
+  if (x) path.x(x);
+  if (y) path.y(y);
+  if (defined) path.defined(defined);
+  if (curve) path.curve(curve);
+  if (children) return children({ path });
   return (
-    <g>
-      <path
-        ref={innerRef}
-        className={cx('vx-linepath', className)}
-        d={path(data)}
-        stroke={stroke}
-        strokeWidth={strokeWidth}
-        strokeDasharray={strokeDasharray}
-        strokeDashoffset={strokeDashoffset}
-        fill={fill}
-        {...additionalProps(restProps, data)}
-      />
-      {glyph && (
-        <g className="vx-linepath-glyphs">{data.map(glyph)}</g>
-      )}
-    </g>
+    <path
+      ref={innerRef}
+      className={cx('vx-linepath', className)}
+      d={path(data)}
+      fill={fill}
+      {...restProps}
+    />
   );
 }

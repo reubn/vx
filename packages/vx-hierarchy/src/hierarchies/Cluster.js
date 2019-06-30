@@ -9,6 +9,14 @@ import DefaultNode from '../HierarchyDefaultNode';
 Cluster.propTypes = {
   root: PropTypes.object.isRequired,
   children: PropTypes.func,
+  top: PropTypes.number,
+  left: PropTypes.number,
+  className: PropTypes.string,
+  size: PropTypes.arrayOf(PropTypes.number),
+  nodeSize: PropTypes.arrayOf(PropTypes.number),
+  separation: PropTypes.func,
+  linkComponent: PropTypes.any,
+  nodeComponent: PropTypes.any
 };
 
 export default function Cluster({
@@ -25,44 +33,27 @@ export default function Cluster({
   ...restProps
 }) {
   const cluster = d3cluster();
+
   if (size) cluster.size(size);
   if (nodeSize) cluster.nodeSize(nodeSize);
   if (separation) cluster.separation(separation);
 
   const data = cluster(root);
 
-  if (!!children) {
-    return (
-      <Group
-        top={top}
-        left={left}
-        className={cx('vx-cluster', className)}
-      >
-        {children({ data })}
-      </Group>
-    );
-  }
+  if (children) return children(data);
 
   return (
-    <Group
-      top={top}
-      left={left}
-      className={cx('vx-cluster', className)}
-    >
+    <Group top={top} left={left} className={cx('vx-cluster', className)}>
       {linkComponent &&
         data.links().map((link, i) => {
           return (
-            <Group key={`cluster-link-${i}`}>
-              {React.createElement(linkComponent, { link })}
-            </Group>
+            <Group key={`cluster-link-${i}`}>{React.createElement(linkComponent, { link })}</Group>
           );
         })}
       {nodeComponent &&
         data.descendants().map((node, i) => {
           return (
-            <Group key={`cluster-node-${i}`}>
-              {React.createElement(nodeComponent, { node })}
-            </Group>
+            <Group key={`cluster-node-${i}`}>{React.createElement(nodeComponent, { node })}</Group>
           );
         })}
     </Group>

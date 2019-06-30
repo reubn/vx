@@ -4,13 +4,17 @@ import Patterns from '../components/tiles/patterns';
 
 export default () => {
   return (
-    <Show component={Patterns} title="Patterns" margin={{
-      top: 10,
-      left: 10,
-      right: 10,
-      bottom: 10,
-    }}>
-{`import React from 'react';
+    <Show
+      component={Patterns}
+      title="Patterns"
+      margin={{
+        top: 10,
+        left: 10,
+        right: 10,
+        bottom: 10
+      }}
+    >
+      {`import React from 'react';
 import { Bar } from '@vx/shape';
 import {
   PatternLines,
@@ -26,7 +30,7 @@ export default ({
   const yMax = height - 80;
   const pWidth = xMax / 4;
   const pHeight = yMax / 2;
-  if (width < 10) return null;
+
   return (
     <svg width={width} height={height}>
       <PatternLines
@@ -160,4 +164,4 @@ export default ({
 }`}
     </Show>
   );
-}
+};
