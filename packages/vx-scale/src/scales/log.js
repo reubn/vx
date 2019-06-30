@@ -7,7 +7,7 @@ export default ({ range, rangeRound, domain, base, nice = false, clamp = false }
   if (range) scale.range(range);
   if (rangeRound) scale.rangeRound(rangeRound);
   if (domain) scale.domain(domain);
-  if (nice) scale.nice(nice);
+  if (nice) scale.nice();
   if (clamp) scale.clamp(true);
   if (base) scale.base(base);
 
