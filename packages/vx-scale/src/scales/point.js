@@ -7,7 +7,7 @@ export default ({ range, rangeRound, domain, padding, align, nice = false }) => 
   if (range) scale.range(range);
   if (rangeRound) scale.rangeRound(rangeRound);
   if (domain) scale.domain(domain);
-  if (nice) scale.nice();
+  if (nice) scale.nice(nice);
   if (padding) scale.padding(padding);
   if (align) scale.align(align);
 
