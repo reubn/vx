@@ -6,7 +6,7 @@ export default ({ range, domain, ticks, tickFormat, nice = false }) => {
 
   if (range) scale.range(range);
   if (domain) scale.domain(domain);
-  if (nice) scale.nice();
+  if (nice) scale.nice(nice);
   if (ticks) scale.ticks(ticks);
   if (tickFormat) scale.tickFormat(tickFormat);
 
